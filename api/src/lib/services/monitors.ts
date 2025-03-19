@@ -2,7 +2,7 @@ import { Monitor } from '@prisma/client'
 import { prisma } from '../prisma'
 import { CreateMonitorBody } from '../dtos/CreateMonitorBody'
 
-export const fetchMonitors = async (): Promise<Monitor[] | undefined> => {
+export const findMonitors = async (): Promise<Monitor[] | undefined> => {
   try {
     const monitors = await prisma.monitor.findMany()
 

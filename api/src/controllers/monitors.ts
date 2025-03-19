@@ -8,7 +8,7 @@ export const getMonitors = async (
   _req: Request,
   res: Response
 ): Promise<void> => {
-  const monitors = await monitorsService.fetchMonitors()
+  const monitors = await monitorsService.findMonitors()
 
   if (!monitors) {
     res

@@ -7,7 +7,7 @@ const THREE = 3
 const delay = (seconds: number) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000))
 
-export const fetchPublications = async (
+export const scrapePublications = async (
   searchSlug: string
 ): Promise<Publication[] | undefined> => {
   let browser

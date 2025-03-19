@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { fetchPublications } from '../lib/services/publications'
+import { scrapePublications } from '../lib/services/publications'
 import { isSlug } from '../lib/utils/isSlug'
 
 export const getPublications = async (
@@ -17,7 +17,7 @@ export const getPublications = async (
     return
   }
 
-  const publications = await fetchPublications(searchSlug)
+  const publications = await scrapePublications(searchSlug)
 
   if (!publications) {
     res
