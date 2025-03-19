@@ -22,7 +22,7 @@ export const getPublications = async (
   if (!publications) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: 'An error has occurred while fetching publications' })
+      .json({ message: 'An error has occurred while getting publications' })
 
     return
   }
