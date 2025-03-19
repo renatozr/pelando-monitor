@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import * as monitorsService from '../lib/services/monitors'
 import { isSlug } from '../lib/utils/isSlug'
 import { MutateMonitorBody } from '../lib/dtos/MutateMonitorBody'
+import { isUUID } from 'validator'
 
 export const getMonitors = async (
   _req: Request,
@@ -70,6 +71,14 @@ export const updateMonitor = async (
   const { title, searchSlug, targetTemperature, disabled }: MutateMonitorBody =
     req.body
 
+  if (!isUUID(id)) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'id param has an invalid UUID format' })
+
+    return
+  }
+
   if (!title || !searchSlug || targetTemperature === undefined) {
     res
       .status(StatusCodes.BAD_REQUEST)
@@ -119,6 +128,14 @@ export const deleteMonitor = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params
+
+  if (!isUUID(id)) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'id param has an invalid UUID format' })
+
+    return
+  }
 
   const existingMonitor = await monitorsService.findMonitorById(id)
 
