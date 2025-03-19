@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import * as monitorsService from '../lib/services/monitors'
 import { isSlug } from '../lib/utils/isSlug'
-import { CreateMonitorBody } from '../lib/dtos/CreateMonitorBody'
+import { MutateMonitorBody } from '../lib/dtos/MutateMonitorBody'
 
 export const getMonitors = async (
   _req: Request,
@@ -13,7 +13,7 @@ export const getMonitors = async (
   if (!monitors) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: 'An error has occurred while fetching monitors' })
+      .json({ message: 'An error has occurred while getting monitors' })
 
     return
   }
@@ -25,13 +25,13 @@ export const createMonitor = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { title, searchSlug, targetTemperature, disabled }: CreateMonitorBody =
+  const { title, searchSlug, targetTemperature, disabled }: MutateMonitorBody =
     req.body
 
   if (!title || !searchSlug || targetTemperature === undefined) {
     res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'Missing required fields' })
+      .json({ message: 'Missing required body fields' })
 
     return
   }
@@ -39,7 +39,7 @@ export const createMonitor = async (
   if (!isSlug(searchSlug)) {
     res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'searchSlug body key has an invalid slug format' })
+      .json({ message: 'searchSlug body field has an invalid slug format' })
 
     return
   }
@@ -60,4 +60,85 @@ export const createMonitor = async (
   }
 
   res.status(StatusCodes.CREATED).json(newMonitor)
+}
+
+export const updateMonitor = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params
+  const { title, searchSlug, targetTemperature, disabled }: MutateMonitorBody =
+    req.body
+
+  if (!title || !searchSlug || targetTemperature === undefined) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'Missing required body fields' })
+
+    return
+  }
+
+  if (!isSlug(searchSlug)) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'searchSlug body field has an invalid slug format' })
+
+    return
+  }
+
+  const existingMonitor = await monitorsService.findMonitorById(id)
+
+  if (!existingMonitor) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: `Monitor with id ${id} not found` })
+
+    return
+  }
+
+  const updatedMonitor = await monitorsService.updateMonitor(id, {
+    title,
+    searchSlug,
+    targetTemperature,
+    disabled,
+  })
+
+  if (!updatedMonitor) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: 'An error has occurred while updating monitor' })
+
+    return
+  }
+
+  res.status(StatusCodes.OK).json(updatedMonitor)
+}
+
+export const deleteMonitor = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params
+
+  const existingMonitor = await monitorsService.findMonitorById(id)
+
+  if (!existingMonitor) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: `Monitor with id ${id} not found` })
+
+    return
+  }
+
+  const deletionSucceed = await monitorsService.deleteMonitor(id)
+
+  if (!deletionSucceed) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: 'An error has occurred while deleting monitor' })
+
+    return
+  }
+
+  res.status(StatusCodes.NO_CONTENT).send()
 }

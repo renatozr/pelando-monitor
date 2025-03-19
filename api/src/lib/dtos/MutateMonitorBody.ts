@@ -1,4 +1,4 @@
-export interface CreateMonitorBody {
+export interface MutateMonitorBody {
   title: string
   searchSlug: string
   targetTemperature: number
