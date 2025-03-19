@@ -70,7 +70,7 @@ export const scrapePublications = async (
         return publications
       } catch (error) {
         console.error(
-          `Error fetching publications (attempt ${attempt} of ${THREE}):`,
+          `Error scraping publications (attempt ${attempt} of ${THREE}):`,
           error
         )
 
@@ -87,7 +87,7 @@ export const scrapePublications = async (
       }
     }
 
-    console.log('Failed to fetch publications after multiple attempts.')
+    console.log('Failed to scrape publications after multiple attempts.')
     return undefined
   } catch (error) {
     console.error('Critical error launching Puppeteer:', error)
