@@ -1,12 +1,7 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { fetchPublications } from '../services/publications'
-
-const isSlug = (slug: string): boolean => {
-  const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-
-  return slugPattern.test(slug)
-}
+import { fetchPublications } from '../lib/services/publications'
+import { isSlug } from '../lib/utils/isSlug'
 
 export const getPublications = async (
   req: Request,
@@ -17,7 +12,7 @@ export const getPublications = async (
   if (!isSlug(searchSlug)) {
     res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'Search slug param has an invalid slug format' })
+      .json({ message: 'searchSlug param has an invalid slug format' })
 
     return
   }

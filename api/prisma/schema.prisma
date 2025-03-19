@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Monitor {
+  id                String   @id @default(uuid())
+  title             String
+  searchSlug        String   @unique
+  targetTemperature Int
+  disabled          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  monitorRecipients MonitorRecipient[]
+}
+
+model MonitorRecipient {
+  monitorId String
+  recipient String
+
+  monitor Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+
+  @@id([monitorId, recipient])
+}
